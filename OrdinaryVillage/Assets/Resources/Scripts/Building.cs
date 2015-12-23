@@ -11,7 +11,9 @@ public abstract class Building : MonoBehaviour {
 
 	//will have a circle collider (onStay)
 
-
+	//Onclick
+	//Start Dragging Ienumarator
+	//
 
 
 
