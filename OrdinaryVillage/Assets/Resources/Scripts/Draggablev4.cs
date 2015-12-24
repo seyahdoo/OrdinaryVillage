@@ -43,17 +43,5 @@ public class Draggablev4 : MonoBehaviour {
 
 	}
 
-	void OnTriggerEnter2D(Collider2D other) 
-	{
-		Debug.Log ("Hello From OnTriggerEnter2D");
-	}
-
-	void OnTriggerExit2D(Collider2D other) 
-	{
-		Debug.Log ("Hello From Exit");
-	}
-
-
-
 
 }

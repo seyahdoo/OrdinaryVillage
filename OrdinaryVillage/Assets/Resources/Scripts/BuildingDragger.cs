@@ -1,23 +1,17 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public abstract class Building : MonoBehaviour {
+public class BuildingDragger : MonoBehaviour {
 
-
-	//should can detect if there is grid nearby
-	//should can Place itself to certaint plae in grid
-	//should check if place is empty before do so
-	//should be able to dragged by mouse(IsDraggable, IsDragging)
-
-	//will have a circle collider (onStay)
-
-	//has dragger on it.
 
 
 	private Vector3 ClickPosition; //dokunduğum yer.
 	private Vector3 dragMargin; //dokunduğum yerin merkezden farkı.
 	public static bool Dragging = false; //Şimdi bi saat kim Dragging yapıyor diye mi bakıcam ?_? Yoğamua
 
+	public GameObject BuildingToDrag;
+	public bool nearSnappable = false;
+	//public Vector2 snappablePosition;
 
 	void OnMouseDown() 
 	{
@@ -29,17 +23,13 @@ public abstract class Building : MonoBehaviour {
 
 		//dokunduğum yerin mekezden farkını bul
 		dragMargin = ClickPosition - this.transform.position;
-
-		//TODO delete this. //Debug için yazıldı. //Gereksiz kod.
-		//this.transform.position = ClickPosition - dragMargin;
-
-
 	}
 
 	void OnMouseDrag() 
 	{
 		//Diğer scriptten Draggingi bitirmediysem filan
-		if (Dragging) { 
+		if (Dragging) 
+		{ 
 
 			//Dokunduğum yeri bul
 			ClickPosition = Camera.main.ScreenToWorldPoint (Input.mousePosition);
@@ -51,6 +41,18 @@ public abstract class Building : MonoBehaviour {
 
 		}
 
+		if (!nearSnappable) 
+		{
+			BuildingToDrag.transform.position = ClickPosition - dragMargin;
+		}
+
+
+	}
+
+	void OnMouseUp()
+	{
+		//if we snapped, this will prevent dragger to desync;
+		this.transform.position = BuildingToDrag.transform.position;
 	}
 
 
@@ -58,6 +60,8 @@ public abstract class Building : MonoBehaviour {
 	{
 		Debug.Log ("Hello From OnTriggerEnter2D");
 		//Draggablev4.Dragging = false;
+		nearSnappable = true;
+		BuildingToDrag.transform.position = other.transform.position;
 	}
 
 	void OnTriggerExit2D(Collider2D other) 
@@ -65,6 +69,7 @@ public abstract class Building : MonoBehaviour {
 		Debug.Log ("Hello From Exit");
 
 		//Draggablev4.Dragging = true;
+		nearSnappable = false;
 	}
 
 
