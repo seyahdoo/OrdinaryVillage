@@ -23,6 +23,11 @@ public class GridPeaceBehaviour : MonoBehaviour {
 		return IsFull;
 	}
 
+	public void SetIsFull(bool IsFull)
+	{
+		this.IsFull = IsFull; 
+	}
+
 	//theese three is for debugging...
 	public int toCheckX = 1;
 	public int toCheckY = 1;
@@ -42,14 +47,14 @@ public class GridPeaceBehaviour : MonoBehaviour {
 		Vector2 myPlace = GetCordsFromName (this.name);
 		//Debug.Log (myPlace);
 
-		Debug.Log (Size.x + ":" + Size.y);
+		//Debug.Log (Size.x + ":" + Size.y);
 
 		for (int x = 1; x <= Size.x; x++) 
 		{
 			for (int y = 1; y <= Size.y; y++) 
 			{
 				//check if peace (i,j) is full if true return false;
-				Debug.Log("Im in! "+ x + "," + y);
+				//Debug.Log("Im in! "+ x + "," + y);
 				GameObject toCheck = GameObject.Find(GetNameFromCords(new Vector2(myPlace.x + x - 1, myPlace.y + y - 1)));
 				//if on corner!
 				if (toCheck == null) 
@@ -67,6 +72,54 @@ public class GridPeaceBehaviour : MonoBehaviour {
 
 		//E artık bu kadar olaydan sonra oyabiliyorumdur artık bea...
 		return true;
+	}
+
+	public bool PlaceBlock(Vector2 Size)
+	{
+		if (CheckIsAvalible (Size)) 
+		{
+			//what is the relative place??? where am i???
+			Vector2 myPlace = GetCordsFromName (this.name);
+			//Debug.Log (myPlace);
+
+			for (int x = 1; x <= Size.x; x++) 
+			{
+				for (int y = 1; y <= Size.y; y++) 
+				{
+					//Get the object to full
+					GameObject toPlace = GameObject.Find(GetNameFromCords(new Vector2(myPlace.x + x - 1, myPlace.y + y - 1)));
+					//Set Full
+					toPlace.GetComponent<GridPeaceBehaviour>().SetIsFull(true);
+				}
+			}
+
+			return true;
+		} else 
+		{
+			Debug.Log ("Block Not placable it Doesnt fit U see'");
+			return false;
+		}
+
+
+	}
+
+	public void DePlace(Vector2 Size)
+	{
+		//what is the relative place??? where am i???
+		Vector2 myPlace = GetCordsFromName (this.name);
+		//Debug.Log (myPlace);
+
+		for (int x = 1; x <= Size.x; x++) 
+		{
+			for (int y = 1; y <= Size.y; y++) 
+			{
+				//Get the object to full
+				GameObject toPlace = GameObject.Find(GetNameFromCords(new Vector2(myPlace.x + x - 1, myPlace.y + y - 1)));
+				//Set Full
+				toPlace.GetComponent<GridPeaceBehaviour>().SetIsFull(false);
+			}
+		}
+
 	}
 
 

@@ -10,8 +10,16 @@ public class BuildingDragger : MonoBehaviour {
 	public static bool Dragging = false; //Şimdi bi saat kim Dragging yapıyor diye mi bakıcam ?_? Yoğamua
 
 	public GameObject BuildingToDrag;
+	public Vector2 BuildingToDragSize = new Vector2 (1f,1f);
 	public bool nearSnappable = false;
-	//public Vector2 snappablePosition;
+
+	public GameObject SnappedObject;
+	public bool isAvalible;
+
+	public Material MaterialDefault;
+	public Material MaterialNotAvalible;
+	public Material MaterialAvalible;
+
 
 	void OnMouseDown() 
 	{
@@ -23,6 +31,18 @@ public class BuildingDragger : MonoBehaviour {
 
 		//dokunduğum yerin mekezden farkını bul
 		dragMargin = ClickPosition - this.transform.position;
+
+		BuildingToDrag.GetComponent<SpriteRenderer> ().sortingOrder = 6;
+
+		//İf Im Snapped, DeSnap it.
+		//TODO write this.
+		if (nearSnappable) 
+		{
+			//DeSnap
+			SnappedObject.GetComponent<GridPeaceBehaviour>().DePlace(BuildingToDragSize);
+		}
+
+
 	}
 
 	void OnMouseDrag() 
@@ -53,22 +73,44 @@ public class BuildingDragger : MonoBehaviour {
 	{
 		//if we snapped, this will prevent dragger to desync;
 		this.transform.position = BuildingToDrag.transform.position;
+		if (nearSnappable && isAvalible)
+		{
+			//todo fix this
+			SnappedObject.GetComponent<GridPeaceBehaviour> ().PlaceBlock(BuildingToDragSize);
+		}
+
+		BuildingToDrag.GetComponent<SpriteRenderer> ().sortingOrder = 5;
 	}
 
 
 	void OnTriggerEnter2D(Collider2D other) 
 	{
-		Debug.Log ("Hello From OnTriggerEnter2D");
-		//Draggablev4.Dragging = false;
 		nearSnappable = true;
-		BuildingToDrag.transform.position = other.transform.position;
+
+		//size Breaks this.
+		//BuildingToDrag.transform.position = other.transform.position;
+
+		//this is more good suppose..
+		BuildingToDrag.transform.position = new Vector2 (
+			other.transform.position.x + (BuildingToDragSize.x * 0.5f) - 0.5f,
+			other.transform.position.y + (BuildingToDragSize.y * 0.5f) - 0.5f
+		);
+
+		SnappedObject = other.gameObject;
+		isAvalible = SnappedObject.GetComponent<GridPeaceBehaviour> ().CheckIsAvalible (BuildingToDragSize);
+		//Debug.Log (isAvalible);
+		if (isAvalible) {
+			BuildingToDrag.GetComponent<SpriteRenderer> ().material = MaterialAvalible;
+		} else 
+		{
+			BuildingToDrag.GetComponent<SpriteRenderer> ().material = MaterialNotAvalible;
+		}
+
 	}
 
 	void OnTriggerExit2D(Collider2D other) 
 	{
-		Debug.Log ("Hello From Exit");
-
-		//Draggablev4.Dragging = true;
+		BuildingToDrag.GetComponent<SpriteRenderer> ().material = MaterialDefault;
 		nearSnappable = false;
 	}
 
